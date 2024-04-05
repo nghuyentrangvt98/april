@@ -25,7 +25,6 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
     }
 
     const password = Math.random().toString(36).slice(3);
-    console.log("password:" + password);
     const hashedPassword = await Authentication.hashPassword(password);
     if (!role) role = UserRole.STUDENT;
     if (!displayName) displayName = email;
@@ -82,7 +81,12 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
         req.body.password
       );
     }
-    updateData.displayName = req.body.displayName;
+    if (req.body.displayName) {
+      updateData.displayName = req.body.displayName;
+    }
+    if (req.body.role) {
+      updateData.role = req.body.role;
+    }
     await this.repo.update(id, updateData);
     const userUpdated = await this.repo.findById(id);
     delete userUpdated.hashedPassword;

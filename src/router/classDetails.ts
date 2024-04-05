@@ -8,11 +8,7 @@ let controllers = new classDetailController();
 let path = "/class-details";
 let detailPath = path + "/:id";
 export default (router: express.Router) => {
-  router.get(
-    path,
-    authorizeTeacher,
-    catchErrors(controllers.list.bind(controllers))
-  );
+  router.get(path, authorize, catchErrors(controllers.list.bind(controllers)));
   router.get(
     detailPath,
     authorizeTeacher,

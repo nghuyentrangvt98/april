@@ -11,6 +11,7 @@ import {
   InvalidScore,
   InvalidregistrationEndDate,
 } from "../exc/classes";
+import { NoPermission } from "../exc/auth";
 
 export class ClassController extends ControllerBase<IClass, ClassRepository> {
   constructor() {
@@ -43,7 +44,6 @@ export class ClassController extends ControllerBase<IClass, ClassRepository> {
 
   validate_registrationEndDate(registrationEndDate: string): Date {
     const date = new Date(registrationEndDate);
-    console.log(registrationEndDate);
     if (date < new Date()) {
       throw new InvalidregistrationEndDate();
     }
@@ -76,6 +76,13 @@ export class ClassController extends ControllerBase<IClass, ClassRepository> {
     }
     const { teacher, subject, final, midTerm, practical, registrationEndDate } =
       req.body;
+    const user = req.body.user;
+    if (
+      user.role == UserRole.TEACHER &&
+      user._id.toString() != obj.teacher._id.toString()
+    ) {
+      throw new NoPermission();
+    }
     if (teacher) {
       await this.validate_teacher(teacher);
     }

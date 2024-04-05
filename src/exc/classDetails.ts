@@ -8,3 +8,9 @@ export class InvalidScore extends CommonException {
     );
   }
 }
+
+export class InvalidClass extends CommonException {
+  constructor() {
+    super(`Invalid class! Class registration is now closed..`, 400);
+  }
+}

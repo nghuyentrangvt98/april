@@ -13,7 +13,7 @@ export interface IClass extends mongoose.Document {
 }
 
 export const ClassSchema = new mongoose.Schema<IClass>({
-  codeName: { type: String, default: "SUBJ" + Date.now().toString().slice(3) },
+  codeName: { type: String, default: "CLS" + Date.now().toString().slice(3) },
   teacher: { type: Schema.ObjectId, ref: "User", require: true },
   subject: { type: Schema.ObjectId, ref: "Subject", require: true },
   midTerm: { type: Number, required: true },

@@ -1,6 +1,6 @@
 import express from "express";
 
-import { authorizeTeacher } from "../middleware/authentication";
+import { authorizeTeacher, authorize } from "../middleware/authentication";
 import { catchErrors } from "../middleware/exceptionHandler";
 import { ClassController } from "../controllers/classes";
 
@@ -8,14 +8,10 @@ let controllers = new ClassController();
 let path = "/classes";
 let detailPath = path + "/:id";
 export default (router: express.Router) => {
-  router.get(
-    path,
-    authorizeTeacher,
-    catchErrors(controllers.list.bind(controllers))
-  );
+  router.get(path, authorize, catchErrors(controllers.list.bind(controllers)));
   router.get(
     detailPath,
-    authorizeTeacher,
+    authorize,
     catchErrors(controllers.get.bind(controllers))
   );
   router.post(

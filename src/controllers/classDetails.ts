@@ -5,8 +5,8 @@ import { ClassDetailRepository } from "../repo/classDetails";
 import { ClassRepository } from "../repo/classes";
 import { UserRepository } from "../repo/users";
 import { UserRole } from "../schemas/enum";
-import { NotFound } from "../exc/others";
-import { InvalidScore } from "../exc/classDetails";
+import { AlreadyExist, NotFound } from "../exc/others";
+import { InvalidClass, InvalidScore } from "../exc/classDetails";
 
 export class classDetailController extends ControllerBase<
   IClassDetail,
@@ -28,6 +28,9 @@ export class classDetailController extends ControllerBase<
     const _class = await classRepo.findById(classId);
     if (!_class) {
       throw new NotFound("class", JSON.stringify({ id: classId }));
+    }
+    if (new Date(_class.registrationEndDate) <= new Date()) {
+      throw new InvalidClass();
     }
   }
 
@@ -106,11 +109,42 @@ export class classDetailController extends ControllerBase<
   ): Promise<express.Response> {
     let { student, classId } = req.body;
     if (req.body.user.role == UserRole.STUDENT) {
-      student = req.body.user.id;
+      student = req.body.user._id.toString();
     }
     await this.validate_student(student);
     await this.validate_class(classId);
-    const data = await this.repo.create({ student, class: classId });
+    const payload = { student, class: classId };
+    const obj = await this.repo.find(payload);
+    if (obj.length > 0) {
+      throw new AlreadyExist(this.name, JSON.stringify(payload));
+    }
+    const data = await this.repo.create(payload);
     return res.status(201).json(data).end();
+  }
+
+  async list(
+    req: express.Request,
+    res: express.Response
+  ): Promise<express.Response> {
+    const filter = JSON.parse((req.query.filter as string) || "{}");
+    const data = await this.repo.find(filter);
+    const user = req.body.user;
+    let res_data: IClassDetail[] = [];
+    switch (user.role) {
+      case UserRole.STUDENT:
+        data.map((item) => {
+          if (item.student._id.toString() == user._id.toString()) {
+            res_data.push(item);
+          }
+        });
+        break;
+      case UserRole.TEACHER:
+        data.map((item) => {
+          if (item.class.teacher.toString() == user._id.toString()) {
+            res_data.push(item);
+          }
+        });
+    }
+    return res.status(200).json(res_data);
   }
 }
