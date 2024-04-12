@@ -13,6 +13,13 @@ export class InvalidToken extends CommonException {
   }
 }
 
+export class InvalidEmail extends CommonException {
+  constructor() {
+    super("the email provided is either invalid or not registered.", 400);
+    this.status = 400;
+  }
+}
+
 export class MissingAuthorization extends CommonException {
   constructor() {
     super("either access token or session-id must be provided.", 403);
