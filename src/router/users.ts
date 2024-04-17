@@ -1,7 +1,11 @@
 import express from "express";
 
 import { UserController } from "../controllers/users";
-import { authorizeAdmin, authorize } from "../middleware/authentication";
+import {
+  authorizeAdmin,
+  authorize,
+  authorizeTeacher,
+} from "../middleware/authentication";
 import { catchErrors } from "../middleware/exceptionHandler";
 
 let controllers = new UserController();
@@ -10,12 +14,12 @@ let detailPath = "/users/:id";
 export default (router: express.Router) => {
   router.get(
     path,
-    authorizeAdmin,
+    authorizeTeacher,
     catchErrors(controllers.list.bind(controllers))
   );
   router.get(
     detailPath,
-    authorizeAdmin,
+    authorizeTeacher,
     catchErrors(controllers.get.bind(controllers))
   );
   router.post(

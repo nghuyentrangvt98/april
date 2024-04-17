@@ -61,6 +61,7 @@ export class ClassController extends ControllerBase<IClass, ClassRepository> {
     await this.validate_score(midTerm, practical, final);
     req.body.registrationEndDate =
       this.validate_registrationEndDate(registrationEndDate);
+    req.body.codeName = "CLS" + Date.now().toString().slice(3);
     const data = await this.repo.create(req.body);
     return res.status(201).json(data).end();
   }

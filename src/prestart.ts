@@ -16,7 +16,7 @@ export const createFirstUser = async () => {
   }
   const newUser = new UserModel({
     email: firstEmail,
-    code_name: "ADM" + Date.now().toString().slice(3),
+    codeName: "ADM" + Date.now().toString().slice(3),
     hashedPassword: await bcrypt.hash(firstPassword, +saltRounds),
     displayName: "Admin",
     role: UserRole.ADMIN,

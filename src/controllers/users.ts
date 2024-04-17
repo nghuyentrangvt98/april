@@ -28,19 +28,19 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
     const hashedPassword = await Authentication.hashPassword(password);
     if (!role) role = UserRole.STUDENT;
     if (!displayName) displayName = email;
-    let code_name = "";
+    let codeName = "";
     switch (role) {
       case UserRole.ADMIN:
-        code_name = "ADM" + Date.now().toString().slice(3);
+        codeName = "ADM" + Date.now().toString().slice(3);
         break;
       case UserRole.TEACHER:
-        code_name = "TCH" + Date.now().toString().slice(3);
+        codeName = "TCH" + Date.now().toString().slice(3);
         break;
       default:
-        code_name = "STU" + Date.now().toString().slice(3);
+        codeName = "STU" + Date.now().toString().slice(3);
     }
     const data = {
-      code_name,
+      codeName,
       email,
       hashedPassword,
       role,

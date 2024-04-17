@@ -3,7 +3,7 @@ import { UserRole } from "./enum";
 import { setTokenAutoRefreshEnabled } from "firebase/app-check";
 
 export interface IUser extends mongoose.Document {
-  code_name: string;
+  codeName: string;
   email: string;
   hashedPassword: string;
   displayName: string;
@@ -12,7 +12,7 @@ export interface IUser extends mongoose.Document {
 }
 
 export const UserSchema = new mongoose.Schema<IUser>({
-  code_name: { type: String, required: true, unique: true },
+  codeName: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   hashedPassword: { type: String, required: true },
   displayName: { type: String, required: true },
