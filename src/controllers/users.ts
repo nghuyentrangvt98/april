@@ -8,6 +8,7 @@ import { UserRepository } from "../repo/users";
 import { sendMail } from "../service/mail";
 import { ControllerBase } from "./base";
 import { IUser } from "../schemas/users";
+import { getSignedUrl } from "../service/storage";
 
 export class UserController extends ControllerBase<IUser, UserRepository> {
   constructor() {
@@ -120,5 +121,20 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
     const userUpdated = await this.repo.findById(req.body.user._id);
     delete userUpdated.hashedPassword;
     return res.status(200).json(userUpdated).end();
+  }
+
+  async get(
+    req: express.Request,
+    res: express.Response
+  ): Promise<express.Response> {
+    console.log("hello");
+    const { id } = req.params;
+    let data = await this.repo.findById(id);
+    if (!data) {
+      throw new NotFound(this.name, id);
+    }
+    data.image = (await getSignedUrl(data.image, 60))[0];
+    delete data.hashedPassword;
+    return res.status(200).json(data);
   }
 }
