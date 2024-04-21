@@ -144,6 +144,8 @@ export class classDetailController extends ControllerBase<
             res_data.push(item);
           }
         });
+      case UserRole.ADMIN:
+        res_data = data;
     }
     return res.status(200).json(res_data);
   }
