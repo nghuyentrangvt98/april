@@ -5,7 +5,7 @@ import { ClassDetailRepository } from "../repo/classDetails";
 import { ClassRepository } from "../repo/classes";
 import { UserRepository } from "../repo/users";
 import { UserRole } from "../schemas/enum";
-import { AlreadyExist, NotFound } from "../exc/others";
+import { AlreadyExist, MissingField, NotFound } from "../exc/others";
 import { InvalidClass, InvalidScore } from "../exc/classDetails";
 
 export class classDetailController extends ControllerBase<
@@ -110,6 +110,12 @@ export class classDetailController extends ControllerBase<
     let { student, classId } = req.body;
     if (req.body.user.role == UserRole.STUDENT) {
       student = req.body.user._id.toString();
+    }
+    if (!student) {
+      throw new MissingField("student");
+    }
+    if (!classId) {
+      throw new MissingField("classId");
     }
     await this.validate_student(student);
     await this.validate_class(classId);

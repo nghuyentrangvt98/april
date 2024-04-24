@@ -1,6 +1,6 @@
 import express from "express";
 
-import { authorizeAdmin } from "../middleware/authentication";
+import { authorizeAdmin, authorize } from "../middleware/authentication";
 import { catchErrors } from "../middleware/exceptionHandler";
 import { SubjectController } from "../controllers/subjects";
 
@@ -8,14 +8,10 @@ let controllers = new SubjectController();
 let path = "/subjects";
 let detailPath = path + "/:id";
 export default (router: express.Router) => {
-  router.get(
-    path,
-    authorizeAdmin,
-    catchErrors(controllers.list.bind(controllers))
-  );
+  router.get(path, authorize, catchErrors(controllers.list.bind(controllers)));
   router.get(
     detailPath,
-    authorizeAdmin,
+    authorize,
     catchErrors(controllers.get.bind(controllers))
   );
   router.post(
