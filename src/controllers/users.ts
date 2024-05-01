@@ -142,6 +142,7 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
     res: express.Response
   ): Promise<express.Response> {
     const bucket = admin.storage().bucket();
+    console.log(req.file);
     const extension = req.file.originalname.split(".")[1];
     const fileName = `${Date.now().toString()}.${extension}`;
     const blob = bucket.file(fileName);
