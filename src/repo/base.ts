@@ -83,7 +83,6 @@ export class RepositoryBaseWithPopulate<
   }
 
   async findById(id: string): Promise<T | null> {
-    console.log(id);
     let p = await this._model.findById(id).populate(this._populateFields);
     if (!p) {
       return null;

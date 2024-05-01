@@ -12,7 +12,7 @@ const verifyAccessToken = async (req: Request): Promise<boolean> => {
     const { credential, user } = await verifyJWT(token);
     if (credential) {
       req.app.locals.credential = credential;
-      req.body.user = user;
+      req.user = user;
       return true;
     }
     return false;
@@ -38,7 +38,7 @@ export const authorizeAdmin = async (
   next: NextFunction
 ): Promise<any> => {
   if (await verifyAccessToken(req)) {
-    if (req.body.user.role != UserRole.ADMIN) {
+    if (req.user.role != UserRole.ADMIN) {
       return res.status(403).send({
         error: "not enough permission to perform this action!",
       });
@@ -54,7 +54,7 @@ export const authorizeTeacher = async (
   next: NextFunction
 ): Promise<any> => {
   if (await verifyAccessToken(req)) {
-    if (![UserRole.TEACHER, UserRole.ADMIN].includes(req.body.user.role)) {
+    if (![UserRole.TEACHER, UserRole.ADMIN].includes(req.user.role)) {
       return res.status(403).send({
         error: "not enough permission to perform this action!",
       });

@@ -1,4 +1,5 @@
 import express from "express";
+import admin from "firebase-admin";
 
 import Authentication from "../utils/authentication";
 import { UserRole } from "../schemas/enum";
@@ -107,7 +108,7 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
       if (
         !(await Authentication.verifyPassword(
           currentPassword,
-          req.body.user.hashedPassword
+          req.user.hashedPassword
         ))
       ) {
         throw new PasswordNotMatch();
@@ -117,8 +118,8 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
       );
     }
 
-    await this.repo.update(req.body.user._id, updateData);
-    const userUpdated = await this.repo.findById(req.body.user._id);
+    await this.repo.update(req.user._id, updateData);
+    const userUpdated = await this.repo.findById(req.user._id);
     delete userUpdated.hashedPassword;
     return res.status(200).json(userUpdated).end();
   }
@@ -127,7 +128,6 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
     req: express.Request,
     res: express.Response
   ): Promise<express.Response> {
-    console.log("hello");
     const { id } = req.params;
     let data = await this.repo.findById(id);
     if (!data) {
@@ -136,5 +136,24 @@ export class UserController extends ControllerBase<IUser, UserRepository> {
     data.image = (await getSignedUrl(data.image, 60))[0];
     delete data.hashedPassword;
     return res.status(200).json(data);
+  }
+  async updateImage(
+    req: express.Request,
+    res: express.Response
+  ): Promise<express.Response> {
+    const bucket = admin.storage().bucket();
+    const extension = req.file.originalname.split(".")[1];
+    const fileName = `${Date.now().toString()}.${extension}`;
+    const blob = bucket.file(fileName);
+    const blobWriter = blob.createWriteStream({
+      metadata: {
+        contentType: req.file.mimetype,
+      },
+    });
+    blobWriter.end(req.file.buffer);
+    await this.repo.update(req.user._id, { image: fileName });
+    const userUpdated = await this.repo.findById(req.user._id);
+    delete userUpdated.hashedPassword;
+    return res.status(200).json(userUpdated).end();
   }
 }

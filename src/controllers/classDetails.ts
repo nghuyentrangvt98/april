@@ -108,8 +108,8 @@ export class classDetailController extends ControllerBase<
     res: express.Response
   ): Promise<express.Response> {
     let { student, classId } = req.body;
-    if (req.body.user.role == UserRole.STUDENT) {
-      student = req.body.user._id.toString();
+    if (req.user.role == UserRole.STUDENT) {
+      student = req.user._id.toString();
     }
     if (!student) {
       throw new MissingField("student");
@@ -134,7 +134,7 @@ export class classDetailController extends ControllerBase<
   ): Promise<express.Response> {
     const filter = JSON.parse((req.query.filter as string) || "{}");
     const data = await this.repo.find(filter);
-    const user = req.body.user;
+    const user = req.user;
     let res_data: IClassDetail[] = [];
     switch (user.role) {
       case UserRole.STUDENT:

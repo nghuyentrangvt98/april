@@ -77,7 +77,7 @@ export class ClassController extends ControllerBase<IClass, ClassRepository> {
     }
     const { teacher, subject, final, midTerm, practical, registrationEndDate } =
       req.body;
-    const user = req.body.user;
+    const user = req.user;
     if (
       user.role == UserRole.TEACHER &&
       user._id.toString() != obj.teacher._id.toString()

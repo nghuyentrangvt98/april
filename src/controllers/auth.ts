@@ -21,7 +21,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const verify = async (req: Request, res: Response) => {
-  const { user } = req.body;
+  const user = req.user;
   user.image = (await getSignedUrl(user.image, 60))[0];
   delete user["hashedPassword"];
   return res.status(200).json(user).end();

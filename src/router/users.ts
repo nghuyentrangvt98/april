@@ -6,7 +6,11 @@ import {
   authorize,
   authorizeTeacher,
 } from "../middleware/authentication";
+import multer from "multer";
 import { catchErrors } from "../middleware/exceptionHandler";
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
 
 let controllers = new UserController();
 let path = "/users";
@@ -25,21 +29,27 @@ export default (router: express.Router) => {
   router.post(
     path,
     authorizeAdmin,
-    catchErrors(catchErrors(controllers.create.bind(controllers)))
+    catchErrors(controllers.create.bind(controllers))
   );
   router.delete(
     detailPath,
     authorizeAdmin,
-    catchErrors(catchErrors(controllers.delete.bind(controllers)))
+    catchErrors(controllers.delete.bind(controllers))
   );
   router.patch(
     "/users/me",
     authorize,
-    catchErrors(catchErrors(controllers.updateMe.bind(controllers)))
+    catchErrors(controllers.updateMe.bind(controllers))
+  );
+  router.patch(
+    "/users/me/image",
+    authorize,
+    upload.single("file"),
+    catchErrors(controllers.updateImage.bind(controllers))
   );
   router.patch(
     detailPath,
     authorizeAdmin,
-    catchErrors(catchErrors(controllers.update.bind(controllers)))
+    catchErrors(controllers.update.bind(controllers))
   );
 };
