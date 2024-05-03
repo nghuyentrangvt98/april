@@ -139,14 +139,21 @@ export class classDetailController extends ControllerBase<
     switch (user.role) {
       case UserRole.STUDENT:
         data.map((item) => {
-          if (item.student._id.toString() == user._id.toString()) {
+          if (
+            item.student &&
+            item.student._id.toString() == user._id.toString()
+          ) {
             res_data.push(item);
           }
         });
         break;
       case UserRole.TEACHER:
         data.map((item) => {
-          if (item.class.teacher.toString() == user._id.toString()) {
+          if (
+            item.class &&
+            item.class.teacher &&
+            item.class.teacher.toString() == user._id.toString()
+          ) {
             res_data.push(item);
           }
         });
